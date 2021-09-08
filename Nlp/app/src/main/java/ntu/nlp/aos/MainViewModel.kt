@@ -2,50 +2,37 @@ package ntu.nlp.aos
 
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import ntu.nlp.aos.adapter.SimpleCardAdapter
+import ntu.nlp.aos.api.ApiStatus
 import java.lang.StringBuilder
 
 private const val TAG = "NLP.MainActVM"
 class MainViewModel: ViewModel() {
     val resultList = Repository.results
-
+    val status = MutableLiveData<ApiStatus>( ApiStatus.IDLE)
     val input = MutableLiveData<String>( )
-    val enableSend = Transformations.map(input){ text->
-        text.isNotEmpty()
-    }
-    val stars = MutableLiveData(1)
-    val useful = MutableLiveData( false )
-    val funny = MutableLiveData( false )
-    val cool = MutableLiveData( false )
-
-    val result = Transformations.map(resultList){
-        val sb = StringBuilder()
-        it.forEachIndexed{i, text ->
-            sb.append("[$i] $text\n\n")
-        }
-        sb.toString()
+    val isLoading = Transformations.map(status){ state ->
+        ApiStatus.LOADING == state
     }
 
-
+    val adapter = SimpleCardAdapter()
 
     fun onSend(){
-        // TODO: call the API OR model here
-        val sb = StringBuilder()
-        sb.append("input: ${input.value}\n")
-        sb.append("stars: ${stars.value}\n")
-        sb.append("useful: ${useful.value}\n")
-        sb.append("funny: ${funny.value}\n")
-        sb.append("cool: ${cool.value}\n")
-        Log.d(TAG, sb.toString())
-
+        Log.d(TAG, "onSend")
         viewModelScope.launch {
-            Repository.generateText(input.value.toString())
+            status.value = ApiStatus.LOADING
+            try{
+                Repository.generateText(input.value.toString())
+                status.value = ApiStatus.DONE
+                Log.d(TAG, "onSend complete")
+            } catch (e: Exception){
+                e.printStackTrace()
+                status.value = ApiStatus.ERROR
+            }
         }
-
     }
 
 }

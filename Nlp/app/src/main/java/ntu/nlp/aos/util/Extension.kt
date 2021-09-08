@@ -3,6 +3,14 @@ package ntu.nlp.aos.util
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+
+import androidx.core.content.ContextCompat
+
+
+
 
 
 //fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
@@ -18,3 +26,10 @@ import android.widget.EditText
 //        }
 //    })
 //}
+
+
+fun Context.copyToClipboard(text:String){
+    val clipboard: ClipboardManager? = ContextCompat.getSystemService(this, ClipboardManager::class.java)
+    val clip = ClipData.newPlainText("Copied Text", text)
+    clipboard?.setPrimaryClip(clip)
+}

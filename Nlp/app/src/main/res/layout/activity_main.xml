@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="ntu.nlp.aos.MainViewModel" />
@@ -16,125 +17,40 @@
         tools:context=".MainActivity"
         android:orientation="vertical">
 
-
-        <ScrollView
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/tv_generated"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_results"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.result}"
-                tools:text="Generated Text goes here" />
-        </ScrollView>
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:simpleAdapter="@{viewModel.resultList}"
+                tools:listitem="@layout/card_result"
+                />
 
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:viewBindingIgnore="true">
-
-            <LinearLayout
+            <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_gravity="center"
+                android:visibility="@{viewModel.isLoading?View.VISIBLE:View.GONE}"
+                />
+        </FrameLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/label_stars" />
 
-                <RadioGroup
-                    android:id="@+id/rg_stars"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingStart="10dp">
 
-                    <RadioButton
-                        android:id="@+id/rb_star_1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/star_1"
-                        android:checked="true" />
-
-                    <RadioButton
-                        android:id="@+id/rb_star_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/star_2" />
-
-                    <RadioButton
-                        android:id="@+id/rb_star_3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/star_3" />
-
-                    <RadioButton
-                        android:id="@+id/rb_star_4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/star_4" />
-
-                    <RadioButton
-                        android:id="@+id/rb_star_5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/star_5" />
-                </RadioGroup>
-            </LinearLayout>
-        </HorizontalScrollView>
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:viewBindingIgnore="true"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                tools:viewBindingIgnore="true">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/label_annotation"
-                    tools:viewBindingIgnore="true" />
-
-                <CheckBox
-                    android:id="@+id/cb_useful"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/useful"
-                    android:checked="@={viewModel.useful}"/>
-
-                <CheckBox
-                    android:id="@+id/cb_funny"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/funny"
-                    android:checked="@={viewModel.funny}"/>
-
-                <CheckBox
-                    android:id="@+id/cb_cool"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/cool"
-                    android:checked="@={viewModel.cool}"/>
-            </LinearLayout>
-        </HorizontalScrollView>
 
         <!-- Input bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@color/white"
+            android:elevation="5dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp">
 
             <EditText
                 android:id="@+id/et_input"
@@ -149,8 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/send"
-                android:enabled="@{viewModel.enableSend}"
-
+                android:enabled="@{!viewModel.isLoading}"
                 android:onClick="@{() -> viewModel.onSend()}"
                 />
         </LinearLayout>

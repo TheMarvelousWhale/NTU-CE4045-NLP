@@ -2,8 +2,12 @@ package ntu.nlp.aos
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
+import ntu.nlp.aos.adapter.BaseClickedListener
 import ntu.nlp.aos.databinding.ActivityMainBinding
+import ntu.nlp.aos.util.copyToClipboard
 
 
 private const val TAG = "NLP.MainAct"
@@ -25,25 +29,19 @@ class MainActivity : AppCompatActivity() {
     private fun initBinding(){
         with(binding){
             // init binding
-            binding.viewModel = _viewModel
-            binding.lifecycleOwner = this@MainActivity
+            viewModel = _viewModel
+            lifecycleOwner = this@MainActivity
             // some other binding
-            rgStars.setOnCheckedChangeListener { _, btnId ->
-                _viewModel.stars.value = when (btnId){
-                    binding.rbStar5.id -> 5
-                    binding.rbStar4.id -> 4
-                    binding.rbStar3.id -> 3
-                    binding.rbStar2.id -> 2
-                    else -> 1
-                }
-            }
+            rvResults.adapter = _viewModel.adapter
         }
     }
 
     private fun observeViewModel(){
-        _viewModel.enableSend.observe(this, { enabled ->
-            binding.btnSend.isEnabled = enabled
-        })
+        _viewModel.adapter.clickedListener = BaseClickedListener { action, viewHolder ->
+            val text = viewHolder.itemView.tag as String
+            copyToClipboard(text)
+            Toast.makeText(this, "'$text' copy to copyToClipboard", Toast.LENGTH_SHORT).show()
+        }
     }
 
 }
