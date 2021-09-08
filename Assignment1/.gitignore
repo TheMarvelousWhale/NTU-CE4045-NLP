@@ -7,6 +7,7 @@ output/
 wandb/
 # -- 2. The folder for inference
 colab_output/
+Gcloud_deploy/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
