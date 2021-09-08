@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 model_path = "./model"
 
-model_output = model_path + '/stilted-snowball-14.pt'
+model_output = model_path + '/pretty-lion-15.pt'
 
 
 SPECIAL_TOKENS  = { "bos_token": "<|BOS|>",
@@ -34,7 +34,7 @@ def classify_review():
     review = request.args.get('review')
     api_key = request.args.get('api_key')
     if review is None or api_key != "MyCustomerApiKey":
-        return jsonify(code=403, message="bad request")
+        return jsonify(code=403, message="Meow Meow bad request :(")
     prompt = SPECIAL_TOKENS['bos_token'] + review + SPECIAL_TOKENS['sep_token']
     generated = torch.tensor(tokenizer.encode(prompt)).unsqueeze(0)
     model.eval()
@@ -43,8 +43,8 @@ def classify_review():
     sample_outputs = model.generate(generated, 
                                       do_sample=True,   
                                       min_length=50, 
-                                      max_length=256,
-                                      top_k=30,                                 
+                                      max_length=100,
+                                      top_k=10,                                 
                                       top_p=0.7,        
                                       temperature=0.9,
                                       repetition_penalty=2.0,
@@ -52,11 +52,12 @@ def classify_review():
                                       )
 
     texts = []
+
     for i, sample_output in enumerate(sample_outputs):
             text = tokenizer.decode(sample_output, skip_special_tokens=True)   
             texts.append(text[len(review):])
 
-    return texts
+    return jsonify({'result':texts})
 
 
 if __name__ == '__main__':
