@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">Nlp</string>
+    <string name="app_name">NLP</string>
+    <string name="input_hint">Enter prompt text</string>
+    <string name="send">Send</string>
+    <string name="label_stars">Starts:</string>
+    <string name="star_1">1</string>
+    <string name="star_2">2</string>
+    <string name="star_3">3</string>
+    <string name="star_4">4</string>
+    <string name="star_5">5</string>
+    <string name="label_annotation">Annotation:</string>
+    <string name="useful">Useful</string>
+    <string name="funny">Funny</string>
+    <string name="cool">Cool</string>
 </resources>
