@@ -1,6 +1,6 @@
 package ntu.nlp.aos.api
 
-import android.provider.SyncStateContract
+
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -19,9 +19,9 @@ import java.util.concurrent.TimeUnit
 interface NlpService {
     @GET(".")
     fun generateTextAsync(
-        @Query(ApiConstants.KEY_REVIEW) prompt: String
+        @Query(ApiConstants.KEY_REVIEW) prompt: String,
+        @Query(ApiConstants.KEY_NUM_REVIEW) num_reviews: Int
     ): Deferred<String>
-
 }
 
 object NlpApi {
