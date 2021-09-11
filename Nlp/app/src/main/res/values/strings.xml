@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NLP</string>
+    <string name="app_name">NLP - Review Generator</string>
     <string name="pref_name">nlp_pref</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="input_hint">Enter prompt text</string>
