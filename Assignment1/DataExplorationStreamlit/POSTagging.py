@@ -35,30 +35,29 @@ def analyze_pos(sampled_reviews):
 
 def pos_spacy(sampled_reviews):
     # sm F1 for POS 0.97, trf F1 for POS 0.98
-    pos_df = pd.DataFrame(columns=["token", "sm_pos", "trf_pos", "match"])
+    pos_df = pd.DataFrame(columns=["token", "pos_1", "pos_2", "match"])
     for review in sampled_reviews:
         doc_sm = nlp_sm(review['text'])
         doc_trf = nlp_trf(review['text'])
         for token_sm, token_trf in zip(doc_sm, doc_trf):
             temp_dict = {
                 "token": str(token_sm),
-                "sm_pos": token_sm.pos_,
-                "trf_pos": token_trf.pos_,
+                "pos_1": token_sm.pos_,
+                "pos_2": token_trf.pos_,
                 "match": token_trf.pos_ == token_sm.pos_
             }
             pos_df = pos_df.append(temp_dict, ignore_index=True)
     return pos_df
 
-
 random_reviews = random.sample(big_json, 5)
-analyze_pos(random_reviews)
+#analyze_pos(random_reviews)
 df = pos_spacy(random_reviews)
 
-tokenized_review = word_tokenize(random_reviews[0]['text'])
-doc_trf = nlp_trf(random_reviews[0]['text'])
-print(len(tokenized_review))
-len(doc_trf)
-for index, i in enumerate(doc_trf):
-    print(i, tokenized_review[index])
+#tokenized_review = word_tokenize(random_reviews[0]['text'])
+#doc_trf = nlp_trf(random_reviews[0]['text'])
+#print(len(tokenized_review))
+#len(doc_trf)
+#for index, i in enumerate(doc_trf):
+#    print(i, tokenized_review[index])
 
 df

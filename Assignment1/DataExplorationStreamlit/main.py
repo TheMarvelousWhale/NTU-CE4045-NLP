@@ -27,9 +27,11 @@ import json, re, random
 import spacy
 import DataExploration
 from DataExploration import *
+from POSTagging import *
+from NounAdjPair import *
 """
 # My first app
-Here's our first attempt at using data to create a table:
+CE4045 NLP Assignment 1:
 """
 ps = PorterStemmer()
 lz = WordNetLemmatizer()
@@ -40,9 +42,11 @@ nlp_sm = spacy.load("en_core_web_sm")
 nlp_trf = spacy.load("en_core_web_trf")
 
 # Need to run if stopwords not downloaded before.
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
+### UNCOMMENT THIS WHEN SUBMITTING ###
+# nltk.download('stopwords')
+# nltk.download('punkt')
+# nltk.download('averaged_perceptron_tagger')
+# Need to run if stopwords not downloaded before.
 
 big_data_file = './reviewSelected100.json'
 
@@ -60,26 +64,45 @@ chosen_business_1 = [x for x in big_json if x['business_id'] == chosen_id_1]
 chosen_id_2 = chosen_id_1
 while chosen_id_2 == chosen_id_1:
     chosen_id_2 = random.choice(business_id_list)
-chosen_business_2 = [x for x in big_json if x['business_id'] == chosen_id_2]
+    chosen_business_2 = [x for x in big_json if x['business_id'] == chosen_id_2]
+
+pt_random_reviews = random.sample(big_json, 5)
+
+stars_1 = []
+stars_2 = []
+stars_3 = []
+stars_4 = []
+stars_5 = []
+for i in big_json:
+    if i['stars'] == 1:
+        stars_1.append(i)
+    elif i['stars'] == 2:
+        stars_2.append(i)
+    elif i['stars'] == 3:
+        stars_3.append(i)
+    elif i['stars'] == 4:
+        stars_4.append(i)
+    else:
+        stars_5.append(i)
+
+nap_random_reviews = random.sample(stars_1, 5)
 
 with st.expander("Task 3.2.1: Tokenization and Stemming"):
         DataExploration.analyze_business(chosen_business_1)
         DataExploration.analyze_business(chosen_business_2)
 
 with st.expander("Task 3.2.2: POS Tagging"):
-    df = pd.DataFrame({
-        'first column': [1, 2, 3, 4],
-         'second column': [10, 20, 30, 40]
-    })
+    pos_df = pos_spacy(pt_random_reviews)
+    pos_df
+
 with st.expander("Task 3.2.3: Writing Style"):
     st.write("Discussion points based on the formality of the way of writing, proper use of English sentence structure such as good grammar, proper pronouns, capitalization, and terms used in the posts.")
     st.subheader("Stack Overflow")
 
 with st.expander("Task 3.2.4: Most frequent ⟨ Noun - Adjective ⟩ pairs for each rating"):
-    df = pd.DataFrame({
-        'first column': [1, 2, 3, 4],
-        'second column': [10, 20, 30, 40]
-    })
+    phrase_dict_1 = generate_phrase_dict(random_reviews)
+    phrase_dict_1
+    
 with st.expander("Task 3.3: Extraction of Indicative Adjective Phrases"):
     df = pd.DataFrame({
         'first column': [1, 2, 3, 4],
