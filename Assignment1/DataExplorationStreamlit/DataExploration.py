@@ -14,6 +14,7 @@ import spacy
 import streamlit as st
 
 
+
 #preparing the tools
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -35,7 +36,6 @@ nlp_trf = spacy.load("en_core_web_trf")
 # nltk.download('averaged_perceptron_tagger')
 
 sample_file = './reviewSamples20.json'
-
 # Clean data
 def clean_text(sum_string):
     s = re.sub('[\r\n\s]+',' ',sum_string) #clean whitespce and newline
@@ -128,5 +128,4 @@ def analyze_business(chosen_business):
         st.pyplot(fig)
 
     plot_word_freq_dist(review_vocab_after_stem)
-
 

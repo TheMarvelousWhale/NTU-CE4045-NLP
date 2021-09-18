@@ -29,6 +29,15 @@ import DataExploration
 from DataExploration import *
 from POSTagging import *
 from NounAdjPair import *
+
+st.set_page_config(page_title='My First App', page_icon=':smiley',
+                   layout="wide", initial_sidebar_state='expanded')
+
+b1 = st.sidebar.button("1. Tokenization and Stemming", key="1")
+b2 = st.sidebar.button("2. POS Tagging", key="2")
+b3 = st.sidebar.button("3. Writing Style", key="3")
+b4 = st.sidebar.button("4. Most frequent ⟨ Noun - Adjective ⟩ pairs for each rating", key="4")
+b5 = st.sidebar.button("5. Extraction of Indicative Adjective Phrases", key="5")
 """
 # My first app
 CE4045 NLP Assignment 1:
@@ -87,26 +96,25 @@ for i in big_json:
 
 nap_random_reviews = random.sample(stars_1, 5)
 
-with st.expander("Task 3.2.1: Tokenization and Stemming"):
+if b1:
         DataExploration.analyze_business(chosen_business_1)
         DataExploration.analyze_business(chosen_business_2)
 
-with st.expander("Task 3.2.2: POS Tagging"):
+if b2:
     pos_df = pos_spacy(pt_random_reviews)
     pos_df
 
-with st.expander("Task 3.2.3: Writing Style"):
+if b3:
     st.write("Discussion points based on the formality of the way of writing, proper use of English sentence structure such as good grammar, proper pronouns, capitalization, and terms used in the posts.")
     st.subheader("Stack Overflow")
 
-with st.expander("Task 3.2.4: Most frequent ⟨ Noun - Adjective ⟩ pairs for each rating"):
+if b4:
     phrase_dict_1 = generate_phrase_dict(random_reviews)
     phrase_dict_1
-    
-with st.expander("Task 3.3: Extraction of Indicative Adjective Phrases"):
+
+if b5:
     df = pd.DataFrame({
         'first column': [1, 2, 3, 4],
         'second column': [10, 20, 30, 40]
     })
-
 
