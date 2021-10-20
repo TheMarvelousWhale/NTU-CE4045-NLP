@@ -12,6 +12,7 @@ import nltk
 import pandas as pd
 import spacy
 import streamlit as st
+import time
 
 
 
@@ -37,12 +38,16 @@ nlp_trf = spacy.load("en_core_web_trf")
 
 sample_file = './reviewSamples20.json'
 # Clean data
+@st.cache(suppress_st_warning=True)
 def clean_text(sum_string):
+    time.sleep(2)
     s = re.sub('[\r\n\s]+',' ',sum_string) #clean whitespce and newline
     return s
 
 #data importing and formating
+@st.cache(suppress_st_warning=True)
 def process_raw_data(data_in_weird_format_file):
+    time.sleep(2)
     with open(data_in_weird_format_file,'r') as f:
         raw_data = f.read()
     data = raw_data.split('}\n')
@@ -84,7 +89,9 @@ for y in ['useful','stars','funny','cool']:
 
 
 # Wrapper for analysis  -- not too sure if the inside functions should throw outside anot it's quite task specific
+@st.cache(suppress_st_warning=True)
 def analyze_business(chosen_business):
+    time.sleep(5)
     # collating all reviews into one string
     all_dem_reviews = ''.join([x['text'] for x in chosen_business])
 

@@ -2,6 +2,8 @@ import random
 from DataExploration import process_raw_data
 import json, re, random
 import spacy
+import streamlit as st
+import time
 
 big_data_file = './reviewSelected100.json'
 
@@ -11,8 +13,8 @@ big_json = [json.loads(x) for x in big_data]
 
 nlp_trf = spacy.load("en_core_web_trf")
 
-# Restructure big_json to group by business & the stars
 business_dict = {}
+# Restructure big_json to group by business & the stars
 for i in big_json:
     if business_dict.get(i['business_id'])==None:
         business_dict[i['business_id']] = {}
@@ -32,7 +34,10 @@ for i in big_json:
     else:
         business_dict[i['business_id']]['5'].append(i)
 
+
+#@st.cache(suppress_st_warning=True)
 def generate_phrase_dict(review_list):
+    time.sleep(5)
     phrase_dict = {}
     adj_list = ['JJ', 'JJR', 'JJS'] #JJ: Adjective; JJR: comparative adjective; JJS: superlative adjective
     noun_list = ['NN', 'NNS', 'NNP', 'NNPS'] #NN: Singular Noun; #NNS: Plural Noun; #NNP: Singular Proper Noun, #NNPS: Plural Proper Noun
@@ -64,7 +69,7 @@ def generate_phrase_dict(review_list):
             print("")
     return phrase_dict
 
-
+#@st.cache(suppress_st_warning=True)
 def generate_phrase_dict_tree(review_list):
     phrase_dict = {}
     for review in review_list:
@@ -139,7 +144,7 @@ def generate_phrase_dict_tree(review_list):
 
     return phrase_dict
 
-
+#@st.cache(suppress_st_warning=True)
 def get_random_reviews(dict_by_biz, stars, num):
     selected = []
     review_list = []
@@ -189,7 +194,7 @@ print(list(sorted_dict)[:10])
 # Show dependency graph
 doc = nlp_trf("this is a very fat and orange cat")
 for token in doc:
-    print(token.text,'|',token.dep_,'|', token.head.text,'|', token.head.pos_,'|',
+    st.write(token.text,'|',token.dep_,'|', token.head.text,'|', token.head.pos_,'|',
             [child for child in token.children])
 spacy.displacy.render(doc, style='dep')
 
