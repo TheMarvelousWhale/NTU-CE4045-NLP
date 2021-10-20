@@ -29,6 +29,7 @@ import DataExploration
 from DataExploration import *
 from POSTagging import *
 from NounAdjPair import *
+from IndicativeAdjectivePhrases import *
 
 st.set_page_config(page_title='My First App', page_icon=':smiley',
                    layout="wide", initial_sidebar_state='expanded')
@@ -70,51 +71,123 @@ business_id_list = list({x['business_id'] for x in big_json})  #make it a set vi
 chosen_id_1 = random.choice(business_id_list)
 chosen_business_1 = [x for x in big_json if x['business_id'] == chosen_id_1]
 
-chosen_id_2 = chosen_id_1
-while chosen_id_2 == chosen_id_1:
-    chosen_id_2 = random.choice(business_id_list)
-    chosen_business_2 = [x for x in big_json if x['business_id'] == chosen_id_2]
 
-pt_random_reviews = random.sample(big_json, 5)
 
-stars_1 = []
-stars_2 = []
-stars_3 = []
-stars_4 = []
-stars_5 = []
-for i in big_json:
-    if i['stars'] == 1:
-        stars_1.append(i)
-    elif i['stars'] == 2:
-        stars_2.append(i)
-    elif i['stars'] == 3:
-        stars_3.append(i)
-    elif i['stars'] == 4:
-        stars_4.append(i)
-    else:
-        stars_5.append(i)
 
-nap_random_reviews = random.sample(stars_1, 5)
 
 if b1:
-        DataExploration.analyze_business(chosen_business_1)
-        DataExploration.analyze_business(chosen_business_2)
+    chosen_id_2 = chosen_id_1
+    while chosen_id_2 == chosen_id_1:
+        chosen_id_2 = random.choice(business_id_list)
+        chosen_business_2 = [x for x in big_json if x['business_id'] == chosen_id_2]
+    DataExploration.analyze_business(chosen_business_1)
+    DataExploration.analyze_business(chosen_business_2)
+    # exec(open("DataExploration.py").read())
 
 if b2:
+    pt_random_reviews = random.sample(big_json, 5)
     pos_df = pos_spacy(pt_random_reviews)
     pos_df
-
+    # exec(open("POSTagging.py").read())
 if b3:
     st.write("Discussion points based on the formality of the way of writing, proper use of English sentence structure such as good grammar, proper pronouns, capitalization, and terms used in the posts.")
     st.subheader("Stack Overflow")
 
 if b4:
-    phrase_dict_1 = generate_phrase_dict(random_reviews)
-    phrase_dict_1
+    business_dict = {}
+    for i in big_json:
+        if business_dict.get(i['business_id']) == None:
+            business_dict[i['business_id']] = {}
+            business_dict[i['business_id']]['1'] = []
+            business_dict[i['business_id']]['2'] = []
+            business_dict[i['business_id']]['3'] = []
+            business_dict[i['business_id']]['4'] = []
+            business_dict[i['business_id']]['5'] = []
+        if i['stars'] == 1:
+            business_dict[i['business_id']]['1'].append(i)
+        elif i['stars'] == 2:
+            business_dict[i['business_id']]['2'].append(i)
+        elif i['stars'] == 3:
+            business_dict[i['business_id']]['3'].append(i)
+        elif i['stars'] == 4:
+            business_dict[i['business_id']]['4'].append(i)
+        else:
+            business_dict[i['business_id']]['5'].append(i)
+    # exec(open("NounAdjPair.py").read())
+    stars_1 = get_random_reviews(business_dict, 1, 50)
+    stars_2 = get_random_reviews(business_dict, 2, 20)
+    stars_3 = get_random_reviews(business_dict, 3, 20)
+    stars_4 = get_random_reviews(business_dict, 4, 20)
+    stars_5 = get_random_reviews(business_dict, 5, 20)
+
+    stars_1_pt = generate_phrase_dict_tree(stars_1)
+    stars_2_pt = generate_phrase_dict_tree(stars_2)
+    stars_3_pt = generate_phrase_dict_tree(stars_3)
+    stars_4_pt = generate_phrase_dict_tree(stars_4)
+    stars_5_pt = generate_phrase_dict_tree(stars_5)
+    print("1 Star")
+    sorted_dict = {k: v for k, v in sorted(stars_1_pt.items(), key=lambda item: item[1], reverse=True)}.items()
+    print(list(sorted_dict)[:10])
+    print("2 Star")
+    sorted_dict = {k: v for k, v in sorted(stars_2_pt.items(), key=lambda item: item[1], reverse=True)}.items()
+    print(list(sorted_dict)[:10])
+    print("3 Star")
+    sorted_dict = {k: v for k, v in sorted(stars_3_pt.items(), key=lambda item: item[1], reverse=True)}.items()
+    print(list(sorted_dict)[:10])
+    print("4 Star")
+    sorted_dict = {k: v for k, v in sorted(stars_4_pt.items(), key=lambda item: item[1], reverse=True)}.items()
+    print(list(sorted_dict)[:10])
+    print("5 Star")
+    sorted_dict = {k: v for k, v in sorted(stars_5_pt.items(), key=lambda item: item[1], reverse=True)}.items()
+    print(list(sorted_dict)[:10])
+
+    # Show dependency graph
+    doc = nlp_trf("this is a very fat and orange cat")
+    for token in doc:
+        print(token.text, '|', token.dep_, '|', token.head.text, '|', token.head.pos_, '|',
+              [child for child in token.children])
+    spacy.displacy.render(doc, style='dep')
 
 if b5:
-    df = pd.DataFrame({
-        'first column': [1, 2, 3, 4],
-        'second column': [10, 20, 30, 40]
-    })
+    # Run IAP.py
+    # exec(open("IndicativeAdjectivePhrases.py").read())
+    biz_phrases = {}
+    for index, i in enumerate(business_dict):
+        print(index, i)
+        biz_review = []
+        for j in range(1, 6):
+            biz_review.extend(business_dict[i][str(j)])
+        biz_phrases[i] = generate_phrase_dict_tree(biz_review)
+
+    with open('business_phrase.json', 'w') as fp:
+        json.dump(biz_phrases, fp)
+
+    # Load Pre-generated json
+    with open('business_phrase.json', 'r') as fp:
+        biz_phrases = json.load(fp)
+
+    tf = pd.DataFrame()
+    for biz in biz_phrases:
+        for phrase in biz_phrases[biz]:
+            tf.at[phrase, biz] = biz_phrases[biz][phrase]
+    tf = tf.fillna(0)  # Replace all NaN with 0
+
+    num_of_biz = len(tf.columns)
+    idf = []
+    for i in (tf == 0).astype(int).sum(axis=1):  # Generate the list of all IDF
+        term_idf = np.log10(num_of_biz / (num_of_biz - i))
+        idf.append(term_idf)
+
+    tf = tf.mul(idf, axis=0)  # Multiply each Term Frequency with the Inversed Document Frequency
+    tf.to_csv("tfidf.csv")  # Export TF-IDF table
+
+    indicative_phrase = {}
+    for biz in biz_phrases:
+        indicative_phrase[biz] = {}
+        indicate_phrase_pos = tf[biz].argmax()
+        indicative_phrase[biz]['phrase'] = tf.index[indicate_phrase_pos]
+        indicative_phrase[biz]['tfidf'] = tf[biz][indicate_phrase_pos]
+    with open('indicative_phrase.json', 'w') as fp:
+        json.dump(indicative_phrase, fp)
+
 
