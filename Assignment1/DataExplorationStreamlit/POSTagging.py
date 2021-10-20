@@ -73,20 +73,24 @@ def pos_spacy_coarse_fine(sampled_reviews):
 #df = pos_spacy_coarse_fine(random_reviews)
 #df.to_csv("POS_Tag.csv", index=None)
 #df
-df = pd.read_csv("POS_Tag.csv")
 
-pos = 0
-arr = [""]*(int(len(df)/2)+1)
-for i, rows in df.iterrows():
-    pos=pos%int(len(df)/2+1)
-    arr[pos] = arr[pos]+str(i)+' & '+rows['token']+' & '+rows['pos_1']+' & '+rows['pos_2'] + '&'
-    pos+=1
 
-for i, row in enumerate(arr):
-    arr[i] = row[:-1]+"\\\\"
 
-for i in arr:
-    st.write(i)
+def print_POS_solution():
+    pos = 0
+    df = pd.read_csv("POS_Tag.csv")
+    arr = [""] * (int(len(df) / 2) + 1)
+    for i, rows in df.iterrows():
+        pos=pos%int(len(df)/2+1)
+        arr[pos] = arr[pos]+str(i)+' & '+rows['token']+' & '+rows['pos_1']+' & '+rows['pos_2'] + '&'
+        pos+=1
+    
+    for i, row in enumerate(arr):
+        arr[i] = row[:-1]+"\\\\"
+    
+    for i in arr:
+        print(i)
+
 #tokenized_review = word_tokenize(random_reviews[0]['text'])
 #doc_trf = nlp_trf(random_reviews[0]['text'])
 #print(len(tokenized_review))

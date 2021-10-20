@@ -70,22 +70,24 @@ big_data = process_raw_data(big_data_file)
 
 big_json = [json.loads(x) for x in big_data]
 
-#Collecting all unique the business id
-business_id_list = list({x['business_id'] for x in big_json})  #make it a set via set comprehension {}, then call tolist
+def choosing_bus_id():
+    #Collecting all unique the business id
+    business_id_list = list({x['business_id'] for x in big_json})  #make it a set via set comprehension {}, then call tolist
+    
+    #Selecting a random business and their review
+    chosen_id_1 = random.choice(business_id_list)
+    chosen_business_1 = [x for x in big_json if x['business_id'] == chosen_id_1]
+    
+    chosen_id_2 = chosen_id_1
+    while chosen_id_2 == chosen_id_1:
+        chosen_id_2 = random.choice(business_id_list)
+    chosen_business_2 = [x for x in big_json if x['business_id'] == chosen_id_2]
+    #Because we have to repeat the whole thing for 2 businesses, we need to wrap the functions into a single wrapper for reuse
+    return chosen_business_1, chosen_business_2
 
-#Selecting a random business and their review
-chosen_id_1 = random.choice(business_id_list)
-chosen_business_1 = [x for x in big_json if x['business_id'] == chosen_id_1]
-
-chosen_id_2 = chosen_id_1
-while chosen_id_2 == chosen_id_1:
-    chosen_id_2 = random.choice(business_id_list)
-chosen_business_2 = [x for x in big_json if x['business_id'] == chosen_id_2]
-#Because we have to repeat the whole thing for 2 businesses, we need to wrap the functions into a single wrapper for reuse
-
-for y in ['useful','stars','funny','cool']:
-    print({y:Counter(x[y] for x in big_json)})
-    print()
+# for y in ['useful','stars','funny','cool']:
+#     print({y:Counter(x[y] for x in big_json)})
+#     print()
 
 
 # Wrapper for analysis  -- not too sure if the inside functions should throw outside anot it's quite task specific

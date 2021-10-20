@@ -66,8 +66,8 @@ def get_adjective_phrase(review_list):
 #     json.dump(biz_phrases, fp)
 
 # Load Pre-generated json
-with open('business_adj_phrase.json', 'r') as fp:
-    biz_phrases=json.load(fp)
+# with open('business_adj_phrase.json', 'r') as fp:
+#     biz_phrases=json.load(fp)
 
 # Natural tf
 # tf = pd.DataFrame()
@@ -75,7 +75,7 @@ with open('business_adj_phrase.json', 'r') as fp:
 #     for phrase in biz_phrases[biz]:
 #         tf.at[phrase, biz] = biz_phrases[biz][phrase]
 # tf = tf.fillna(0) # Replace all NaN with 0
-tf = pd.read_csv("tf.csv")
+# tf = pd.read_csv("tf.csv")
 
 # Log tf
 # tfl = pd.DataFrame()
@@ -83,7 +83,7 @@ tf = pd.read_csv("tf.csv")
 #     for phrase in biz_phrases[biz]:
 #         tfl.at[phrase, biz] = 1+np.log(biz_phrases[biz][phrase])
 # tfl = tfl.fillna(0) # Replace all NaN with 0
-tfl = pd.read_csv("tf-l.csv")
+# tfl = pd.read_csv("tf-l.csv")
 
 # natural tf required for idf generation
 # num_of_biz = len(tf.columns) #Extract IDF using raw freq
@@ -93,12 +93,12 @@ tfl = pd.read_csv("tf-l.csv")
 #     idf.append(term_idf)
     
 #tf = tf.mul(idf, axis=0) # Multiply each Term Frequency with the Inversed Document Frequency
-tf = pd.read_csv("tfidf-ntn.csv") # Export TF-IDF table
+# tf = pd.read_csv("tfidf-ntn.csv") # Export TF-IDF table
 
 # tfl = tfl.mul(idf, axis=0) # Multiply each Term Frequency with the Inversed Document Frequency
-tfl = pd.read_csv("tfidf-ltn.csv") # Export TF-IDF table
+# tfl = pd.read_csv("tfidf-ltn.csv") # Export TF-IDF table
 
-indicative_phrase = {}
+# indicative_phrase = {}
 # for biz in biz_phrases:
 #     indicative_phrase[biz]={}
 #     indicate_phrase_pos = tfl[biz].argmax()
@@ -107,21 +107,20 @@ indicative_phrase = {}
 # with open('indicative_phrase-ltn.json', 'w') as fp:
 #     json.dump(indicative_phrase, fp)
     
-with open('indicative_phrase-ltn.json', 'r') as fp:
-    indicative_phrase=json.load(fp)
-
-indicative_phrase
+# with open('indicative_phrase-ltn.json', 'r') as fp:
+#     indicative_phrase=json.load(fp)
 
 # Show dependency graph
-doc = nlp_trf("The cat is fat and fluffy")
-for token in doc:
-    st.write(token.text,'|',token.dep_,'|', token.head.text,'|', token.head.pos_,'|',
-            [child for child in token.children])
-spacy.displacy.render(doc, style='dep')
+def show_iap_dep_graph():
+    doci = nlp_trf("The cat is fat and fluffy")
+    for token in doci:
+        st.write(token.text,'|',token.dep_,'|', token.head.text,'|', token.head.pos_,'|',
+                [child for child in token.children])
+    spacy.displacy.render(doci, style='dep')
 
-s = tf.sum(axis=1)
-t = s.sort_values(ascending=False)
-t = t.reset_index()
-temph = t[0][:500]
+    s = tf.sum(axis=1)
+    t = s.sort_values(ascending=False)
+    t = t.reset_index()
+    temph = t[0][:500]
 
-plt.bar(t.index[:500],temph)
+    plt.bar(t.index[:500],temph)
