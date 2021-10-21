@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Review Generator</string>
+    <string name="pref_name">nlp_pref</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="input_hint">Enter prompt text</string>
+    <string name="send">Send</string>
+    <string name="label_stars">Starts:</string>
+    <string name="star_1">1</string>
+    <string name="star_2">2</string>
+    <string name="star_3">3</string>
+    <string name="star_4">4</string>
+    <string name="star_5">5</string>
+    <string name="label_annotation">Annotation:</string>
+    <string name="useful">Useful</string>
+    <string name="funny">Funny</string>
+    <string name="cool">Cool</string>
+    <string name="prompt">Prompt</string>
+    <string name="help_message">This application uses NLP technology to generate reviews based on given prompt text. Try out now!</string>
+
+
+    <!-- Setting -->
+    <string name="header_query">Query</string>
+
+    <string name="title_app_theme">App Theme</string>
+    <string name="title_num_reviews">Number of generated reviews</string>
+    <!-- Preference Keys -->
+    <string name="key_app_theme">app_theme</string>
+    <string name="key_num_reviews">num_reviews</string>
+
+    <!--  Test  -->
+    <string name="sample_text_long">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+
+
+</resources>
