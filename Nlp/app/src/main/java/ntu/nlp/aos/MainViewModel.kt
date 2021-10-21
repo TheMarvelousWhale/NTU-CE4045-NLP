@@ -23,22 +23,25 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val adapter = ResponseAdapter()
 
     fun onSend(){
-        Log.d(TAG, "onSend")
+        if (input.value.isNullOrEmpty()){
+            return
+        }
         viewModelScope.launch {
-
-            status.value = ApiStatus.LOADING
+            Log.d(TAG, "request start")
             try{
+                status.value = ApiStatus.LOADING
                 val pref = getSharePreferences()
                 val numReviews = Integer.parseInt(pref.getString("num_reviews", "1"))
                 val prompt = input.value.toString()
+                input.value = ""
 
                 Repository.generateText(prompt, numReviews)
                 status.value = ApiStatus.DONE
-                Log.d(TAG, "onSend complete")
             } catch (e: Exception){
                 e.printStackTrace()
                 status.value = ApiStatus.ERROR
             }
+            Log.d(TAG, "request complete")
         }
     }
 
