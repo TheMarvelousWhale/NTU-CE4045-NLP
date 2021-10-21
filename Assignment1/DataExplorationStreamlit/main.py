@@ -15,6 +15,7 @@ from collections import Counter
 import json,re,random
 import matplotlib.pyplot as plt
 import spacy
+from spacy_streamlit import visualize_parser
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -39,13 +40,10 @@ import IndicativeAdjectivePhrases
 # My first app
 CE4045 NLP Assignment 1:
 """
-ps = PorterStemmer()
-lz = WordNetLemmatizer()
-en_stopwords = stopwords.words('english')
 
 # Load SpaCy models
 # nlp_sm = spacy.load("en_core_web_sm")
-# nlp_trf = spacy.load("en_core_web_trf")
+nlp_trf = spacy.load("en_core_web_trf")
 
 # Need to run if stopwords not downloaded before.
 ### UNCOMMENT THIS WHEN SUBMITTING ###
@@ -74,7 +72,8 @@ if b1:
     # exec(open("DataExploration.py").read())
 
 if b2:
-    POSTagging.print_POS_solution()
+    print_POS = POSTagging.print_POS_solution()
+    print_POS
     
 if b3:
     st.write("Discussion points based on the formality of the way of writing, proper use of English sentence structure such as good grammar, proper pronouns, capitalization, and terms used in the posts.")
@@ -100,8 +99,16 @@ if b4:
     stars_5_pt = NounAdjPair.generate_phrase_dict_tree(stars_5)
 
     main_compile_list = NounAdjPair.print_sorted_dict(stars_1_pt, stars_2_pt, stars_3_pt, stars_4_pt, stars_5_pt)
-    NounAdjPair.print_compiled_list(main_compile_list)
-    NounAdjPair.show_dep_graph()
+    main_compile_list
+    printer_compile_list = NounAdjPair.print_compiled_list(main_compile_list)
+    printer_compile_list
+    #doc = nlp_trf("this is a very fat and orange cat")
+    doc = nlp_trf("this is a very fat and orange cat")
+    for token in doc:
+        st.write(token.text, '|', token.dep_, '|', token.head.text, '|', token.head.pos_, '|',
+                 [child for child in token.children])
+    #spacy.displacy.render(doc, style='dep')
+    visualize_parser(doc)
 
 if b5:
     print("hi")
@@ -120,7 +127,19 @@ if b5:
         indicative_phrase = json.load(fp)
     #try only showing 10
     indicative_phrase
-
+    doci = nlp_trf("The cat is fat and fluffy")
+    for token in doci:
+        st.write(token.text, '|', token.dep_, '|', token.head.text, '|', token.head.pos_, '|',
+                 [child for child in token.children])
+    visualize_parser(doci)
     #Show dependency graph
-    IndicativeAdjectivePhrases.show_iap_dep_graph()
+    #IndicativeAdjectivePhrases.show_iap_dep_graph()
+    tf = pd.read_csv("tf.csv")
+    s = tf.sum(axis=1)
+    t = s.sort_values(ascending=False)
+    t = t.reset_index()
+    temph = t[0][:500]
+
+    plt.bar(t.index[:500],temph)
+    st.pyplot()
 

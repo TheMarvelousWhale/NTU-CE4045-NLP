@@ -1,4 +1,6 @@
 import random
+import streamlit as st
+import time
 from DataExploration import process_raw_data
 import json, re, random
 import spacy
@@ -13,7 +15,9 @@ big_json = [json.loads(x) for x in big_data]
 nlp_trf = spacy.load("en_core_web_trf")
 
 # Restructure big_json to group by business & the stars
+#@st.cache(suppress_st_warning=True)
 def return_bus_dict():
+    time.sleep(2)
     business_dict = {}
     for i in big_json:
         if business_dict.get(i['business_id'])==None:
@@ -177,21 +181,21 @@ def get_random_reviews(dict_by_biz, stars, num):
 
 def print_sorted_dict(stars_1_pt, stars_2_pt, stars_3_pt, stars_4_pt, stars_5_pt):
     compiled_list = []
-    print("1 Star")
+    st.write("1 Star")
     sorted_dict = {k: v for k, v in sorted(stars_1_pt.items(), key=lambda item: item[1], reverse=True)}.items()
-    print(list(sorted_dict)[:10])
-    print("2 Star")
+    st.write(list(sorted_dict)[:10])
+    st.write("2 Star")
     sorted_dict = {k: v for k, v in sorted(stars_2_pt.items(), key=lambda item: item[1], reverse=True)}.items()
-    print(list(sorted_dict)[:10])
-    print("3 Star")
+    st.write(list(sorted_dict)[:10])
+    st.write("3 Star")
     sorted_dict = {k: v for k, v in sorted(stars_3_pt.items(), key=lambda item: item[1], reverse=True)}.items()
-    print(list(sorted_dict)[:10])
-    print("4 Star")
+    st.write(list(sorted_dict)[:10])
+    st.write("4 Star")
     sorted_dict = {k: v for k, v in sorted(stars_4_pt.items(), key=lambda item: item[1], reverse=True)}.items()
-    print(list(sorted_dict)[:10])
-    print("5 Star")
+    st.write(list(sorted_dict)[:10])
+    st.write("5 Star")
     sorted_dict = {k: v for k, v in sorted(stars_5_pt.items(), key=lambda item: item[1], reverse=True)}.items()
-    print(list(sorted_dict)[:10])
+    st.write(list(sorted_dict)[:10])
     compiled_list.extend(list(sorted_dict)[:10])
     return compiled_list
 
@@ -199,10 +203,11 @@ def print_sorted_dict(stars_1_pt, stars_2_pt, stars_3_pt, stars_4_pt, stars_5_pt
 def print_compiled_list(compiled_list):
     pos = 0
     rev_count = 0
+    list = []
     star_count = 1
-    arr = [""] * (30)
+    arr = [""] * (10)
     for i in compiled_list:
-        pos = pos % int(30)
+        pos = pos % int(10)
         phrase = i[0]
         freq = i[1]
         arr[pos] = arr[pos] + str(star_count) + ' & ' + phrase + ' & ' + str(freq) + '&'
@@ -215,11 +220,10 @@ def print_compiled_list(compiled_list):
         arr[i] = row[:-1] + "\\\\"
     
     for i in arr:
-        print(i)
+        list.append(i)
+    return list
 
-def show_dep_graph():
-    doc = nlp_trf("this is a very fat and orange cat")
-    for token in doc:
-        print(token.text, '|', token.dep_, '|', token.head.text, '|', token.head.pos_, '|',
-              [child for child in token.children])
-    spacy.displacy.render(doc, style='dep')
+# doc = nlp_trf("this is a very fat and orange cat")
+# for token in doc:
+#     st.write(token.text, '|', token.dep_, '|', token.head.text, '|', token.head.pos_, '|', [child for child in token.children])
+# spacy.displacy.render(doc, style='dep')

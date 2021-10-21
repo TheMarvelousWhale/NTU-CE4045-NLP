@@ -111,16 +111,12 @@ def get_adjective_phrase(review_list):
 #     indicative_phrase=json.load(fp)
 
 # Show dependency graph
-def show_iap_dep_graph():
-    doci = nlp_trf("The cat is fat and fluffy")
-    for token in doci:
-        st.write(token.text,'|',token.dep_,'|', token.head.text,'|', token.head.pos_,'|',
-                [child for child in token.children])
-    spacy.displacy.render(doci, style='dep')
 
-    s = tf.sum(axis=1)
-    t = s.sort_values(ascending=False)
-    t = t.reset_index()
-    temph = t[0][:500]
+# doci = nlp_trf("The cat is fat and fluffy")
+# for token in doci:
+#     st.write(token.text,'|',token.dep_,'|', token.head.text,'|', token.head.pos_,'|',
+#             [child for child in token.children])
+# spacy.displacy.render(doci, style='dep')
 
-    plt.bar(t.index[:500],temph)
+#def show_iap_dep_graph():
+
