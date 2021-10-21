@@ -180,24 +180,27 @@ def get_random_reviews(dict_by_biz, stars, num):
 # stars_5_pt = generate_phrase_dict_tree(stars_5)
 
 def print_sorted_dict(stars_1_pt, stars_2_pt, stars_3_pt, stars_4_pt, stars_5_pt):
-    compiled_list = []
-    st.write("1 Star")
-    sorted_dict = {k: v for k, v in sorted(stars_1_pt.items(), key=lambda item: item[1], reverse=True)}.items()
-    st.write(list(sorted_dict)[:10])
-    st.write("2 Star")
-    sorted_dict = {k: v for k, v in sorted(stars_2_pt.items(), key=lambda item: item[1], reverse=True)}.items()
-    st.write(list(sorted_dict)[:10])
-    st.write("3 Star")
-    sorted_dict = {k: v for k, v in sorted(stars_3_pt.items(), key=lambda item: item[1], reverse=True)}.items()
-    st.write(list(sorted_dict)[:10])
-    st.write("4 Star")
-    sorted_dict = {k: v for k, v in sorted(stars_4_pt.items(), key=lambda item: item[1], reverse=True)}.items()
-    st.write(list(sorted_dict)[:10])
-    st.write("5 Star")
-    sorted_dict = {k: v for k, v in sorted(stars_5_pt.items(), key=lambda item: item[1], reverse=True)}.items()
-    st.write(list(sorted_dict)[:10])
-    compiled_list.extend(list(sorted_dict)[:10])
-    return compiled_list
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col1:
+        st.write("1 Star")
+        sorted_dict = {k: v for k, v in sorted(stars_1_pt.items(), key=lambda item: item[1], reverse=True)}.items()
+        st.write(list(sorted_dict)[:10])
+    with col2:
+        st.write("2 Star")
+        sorted_dict = {k: v for k, v in sorted(stars_2_pt.items(), key=lambda item: item[1], reverse=True)}.items()
+        st.write(list(sorted_dict)[:10])
+    with col3:
+        st.write("3 Star")
+        sorted_dict = {k: v for k, v in sorted(stars_3_pt.items(), key=lambda item: item[1], reverse=True)}.items()
+        st.write(list(sorted_dict)[:10])
+    with col4:
+        st.write("4 Star")
+        sorted_dict = {k: v for k, v in sorted(stars_4_pt.items(), key=lambda item: item[1], reverse=True)}.items()
+        st.write(list(sorted_dict)[:10])
+    with col5:
+        st.write("5 Star")
+        sorted_dict = {k: v for k, v in sorted(stars_5_pt.items(), key=lambda item: item[1], reverse=True)}.items()
+        st.write(list(sorted_dict)[:10])
 
 
 def print_compiled_list(compiled_list):

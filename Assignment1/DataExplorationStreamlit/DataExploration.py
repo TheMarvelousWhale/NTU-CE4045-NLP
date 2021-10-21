@@ -116,13 +116,13 @@ def analyze_business(chosen_business):
     review_vocab_bef_stem = build_word_frequency(all_dem_clean_reviews, blacklist=en_stopwords)
     review_vocab_after_stem = build_word_frequency(all_dem_clean_reviews, blacklist=en_stopwords, stemmer=ps)
 
-    st.write("Before stemming, most 10 common words:")
+    st.write("Most 10 common words:")
     for x in review_vocab_bef_stem.most_common(10):
         st.write('\t', x[0].ljust(15, ' '), x[1])  # justify the column abit
 
     st.write('\n\n')
 
-    st.write("After stemming, most 10 common words:")
+    st.write("Most 10 common words:")
     for x in review_vocab_after_stem.most_common(10):
         st.write('\t', x[0].ljust(15, ' '), x[1])
 
