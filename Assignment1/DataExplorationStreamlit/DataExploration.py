@@ -36,7 +36,7 @@ nlp_trf = spacy.load("en_core_web_trf")
 # nltk.download('punkt')
 # nltk.download('averaged_perceptron_tagger')
 
-sample_file = './reviewSamples20.json'
+sample_file = '../reviewSamples20.json'
 # Clean data
 @st.cache(suppress_st_warning=True)
 def clean_text(sum_string):
@@ -64,7 +64,7 @@ json_list = [json.loads(x) for x in data]
 for i,_json in enumerate(json_list):
     print(f"{i}\t{_json.keys()}")
 
-big_data_file = './reviewSelected100.json'
+big_data_file = '../reviewSelected100.json'
 
 big_data = process_raw_data(big_data_file)
 
@@ -88,6 +88,7 @@ def choosing_bus_id():
 # Wrapper for analysis  -- not too sure if the inside functions should throw outside anot it's quite task specific
 @st.cache(suppress_st_warning=True)
 def analyze_business(chosen_business):
+    col1, col2 = st.columns(2)
     time.sleep(5)
     # collating all reviews into one string
     all_dem_reviews = ''.join([x['text'] for x in chosen_business])
@@ -110,16 +111,17 @@ def analyze_business(chosen_business):
 
     review_vocab_bef_stem = build_word_frequency(all_dem_clean_reviews, blacklist=en_stopwords)
     review_vocab_after_stem = build_word_frequency(all_dem_clean_reviews, blacklist=en_stopwords, stemmer=ps)
+    with col1:
+        col1.subheader("Before Stemming:")
+        st.write("Most 10 common words - ")
+        for x in review_vocab_bef_stem.most_common(10):
+            st.write('\t', x[0].ljust(15, ' '), x[1])  # justify the column abit
 
-    st.write("Most 10 common words:")
-    for x in review_vocab_bef_stem.most_common(10):
-        st.write('\t', x[0].ljust(15, ' '), x[1])  # justify the column abit
-
-    st.write('\n\n')
-
-    st.write("Most 10 common words:")
-    for x in review_vocab_after_stem.most_common(10):
-        st.write('\t', x[0].ljust(15, ' '), x[1])
+    with col2:
+        col2.subheader("After Stemming:")
+        st.write("Most 10 common words - ")
+        for x in review_vocab_after_stem.most_common(10):
+            st.write('\t', x[0].ljust(15, ' '), x[1])
 
     # Plotting the word distribution
     def plot_word_freq_dist(the_vocab):

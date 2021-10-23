@@ -13,9 +13,7 @@ import json
 import nltk
 import pandas as pd
 import DataExploration
-import POSTagging
 import NounAdjPair
-import IndicativeAdjectivePhrases
 
 st.sidebar.header("CE4045 NLP Assignment 1:")
 st.sidebar.write("Please select from the sidebar to navigate")
@@ -24,9 +22,9 @@ placeholder = st.empty()
 
 with placeholder.container():
     st.header("First Assignment for NLP:")
-    st.subheader("This project is done by: Kheng Quan, Viet, Shan Jie, Chia Yu, Hao Wei.")
+    st.subheader("This project is done by: Kheng Quan, Viet, Shan Jie, Chia Yu, and Hao Wei.")
     st.write("")
-    st.write("This is the data visualisation of the tasks assigned.")
+    st.write("This is the data visualisation and discussion of the tasks assigned, where the segments for task 1 - 5 are separated into data analysis then discussion.")
     st.write("Navigate by selecting the buttons in the sidebar and please wait for the code to run finish before selecting another button. Thank you!")
 
 b1 = st.sidebar.button("1. Tokenization and Stemming", key="1")
@@ -51,20 +49,32 @@ if b1:
     placeholder.empty()
     col1, col2 = st.columns(2)
     chosen_business_1, chosen_business_2 = DataExploration.choosing_bus_id()
-    with col1:
-        col1.subheader("Before Stemming:")
-        DataExploration.analyze_business(chosen_business_1)
+    st.header("Tokenization and Stemming:")
+    st.subheader("Data - 1st chosen business:")
+    DataExploration.analyze_business(chosen_business_1)
 
-    with col2:
-        col2.subheader("After Stemming:")
-        DataExploration.analyze_business(chosen_business_2)
+    st.subheader("Data - 2nd chosen business:")
+    DataExploration.analyze_business(chosen_business_2)
+    st.write("")
+    st.subheader("Discussion -")
+    st.write("This solution is targeted at building word frequency dictionary for 2 randomly selected businesses")
+    st.write("We can observe that the top most common words are unchanged after stemming. This is a good indication that the top words are words of different forms e.g. plural vs singular. Stemming will reduce the inflectional forms of the word into 1 single token, which is likely better for word counting. For example, services and servicing will be merged with service, increasing the word count of servic(e).")
+    st.write("It is worth noting that stemming would merge different senses of homonyms as well. However, from the graph, the loss in sense of homonyms is not as significant as there is no drastic change to the frequency count.")
+
 
 if b2:
+    st.header("Part-of-Speech Tagging:")
     placeholder.empty()
-    st.subheader("POS Tagging:")
+    st.subheader("Data - ")
     st.write("2 sets of tagging results, 'pos_1' and 'pos_2'")
-    df = pd.read_csv("POS_Tag.csv")
+    df = pd.read_csv("../POS_Tag.csv")
+    df = df.iloc[:, :-1]
     df
+    st.subheader("Discussion - ")
+    st.markdown("This analysis used **pos_1** as **fine grain POS tag** while **pos_2** as **coarse grain POS tag**.")
+    st.write("It can be observed that there are vast similarities between pos_1 and pos_2 e.g. The token - \"really\" is tagged as RB and ADV, which both stand for adverbs. On contrary, differences between coarse grain and fine grain like \"that\" being WDT (Wh-determiner) for pos_1 but DET for pos_2 and \"the\" being DT for pos_1 but DET for pos_2 could both be useful depending on the context of dataset given.")
+    st.write("In this case where the dataset is a collection of food reviews, pos_2 might serve to be more useful as food reviews require less precision as compared to a datasets with higher formality e.g. being used in a collection of reports. Using the coarse grain POS tag would be suffice in most contextx unless the task requires a more specific tags, then fine grain POS tag could be deployed.")
+
     
 if b3:
     placeholder.empty()
@@ -104,23 +114,27 @@ if b4:
     stars_3_pt = NounAdjPair.generate_phrase_dict_tree(stars_3)
     stars_4_pt = NounAdjPair.generate_phrase_dict_tree(stars_4)
     stars_5_pt = NounAdjPair.generate_phrase_dict_tree(stars_5)
-    st.subheader("Top-10 most frequent noun-adjective pairs:")
-    st.write("For 1 - 5 stars:")
+    st.header("Top-10 most frequent noun-adjective pairs:")
+    st.subheader("For 1 - 5 stars:")
+    st.write("For data visualization, only 10 pairs are shown per rating.")
     NounAdjPair.print_sorted_dict(stars_1_pt, stars_2_pt, stars_3_pt, stars_4_pt, stars_5_pt)
 
+    st.subheader("Discussion - ")
+    st.write("This extraction identified the common characteristics of a group of reviews within their own rating, which would be done across 1 - 5 stars. 50 random businesses were extracted for 1 star reviews, while 20 random businesses were extracted for 2 - 5 stars reviews.")
+    st.write("An issue with noun-adjective pairs is that the corresponding adjectives might not adjacent to one another The  adjective may appear before or after the noun, e.g. The service is good vs Good service. Hence, a set of rules were formulated to extract the Noun-Adjective pairs using the CG POS tag of each token. The complete pairs are added into a dictionary, which will be used to track the frequency of each pair.")
+    st.write("The first extraction rule is targeted at cases where the adjective appears before the noun while the second extraction rule is targeted at cases where the adjective appears after the noun. Thus, the lists generated could be useful to further filter the common differences in words used between the different star ratings. For example, good food is commonly used amongst the 4 - 5 stars reviews while bad taste or low quality is commonly used in 1 - 2 stars reviews.")
+    st.write("It is worthy to take note that there might be positives words captured by the extraction in poor reviews e.g. great service in 1 star. However, given the context, it could be used to associate with bad service i.e. not a great service.")
+
 if b5:
-    st.subheader("Extraction of Indicative Adjective Phrases:")
-    st.write("Usage of adjective pair extractor and tf-idf to obtain the IAPs -")
-    with open('business_adj_phrase.json', 'r') as fp:
-        biz_phrases = json.load(fp)
-
-    tf = pd.read_csv("tf.csv")
-    tfl = pd.read_csv("tf-l.csv")
-
-    tf = pd.read_csv("tfidf-ntn.csv")
-    tfl = pd.read_csv("tfidf-ltn.csv")  # Export TF-IDF table
+    placeholder.empty()
+    st.header("Extraction of Indicative Adjective Phrases:")
+    st.subheader("Usage of adjective pair extractor and tf-idf to obtain the IAPs -")
 
     indicative_phrase = {}
-    with open('indicative_phrase-ltn.json', 'r') as fp:
+    with open('../indicative_phrase-ltn.json', 'r') as fp:
         indicative_phrase = json.load(fp)
     indicative_phrase
+
+    st.subheader("Discussion - ")
+    st.write("The main advantage of using tf-idf based method is that the indicative phrase for huge dataset of reviews could be extracted unsupervised.")
+    st.write("However, in this context, this approach held the assumption that phrase uniqueness of a piece of food review would be a good indicator for the rest of the reviews. All the extracted adjective of that 1 review is treated equally and applied onto other reviews. This way of analysis might not be accurate when it comes to food reviews as there are different aspects like service, food quality or cleanliness that people could critique on for a restaurant. The selected review could be biased to the quality of food and not focus or mention on the other aforementioned aspects. This would then result to numerous false positives and little false negatives, indicating that the precision would be low but relevant - low precision yet high recall.")

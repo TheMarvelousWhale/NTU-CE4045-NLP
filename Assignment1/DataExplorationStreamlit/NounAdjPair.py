@@ -6,7 +6,7 @@ import json, re, random
 import spacy
 import time
 
-big_data_file = './reviewSelected100.json'
+big_data_file = '../reviewSelected100.json'
 
 big_data = process_raw_data(big_data_file)
 
