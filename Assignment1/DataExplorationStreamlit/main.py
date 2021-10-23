@@ -68,8 +68,23 @@ if b2:
     
 if b3:
     placeholder.empty()
+    st.header("Writing Styles:")
     st.write("Discussion points based on the formality of the way of writing, proper use of English sentence structure such as good grammar, proper pronouns, capitalization, and terms used in the posts.")
-    st.subheader("Stack Overflow")
+    st.write("")
+    st.subheader("Stack Overflow - ")
+    st.write("Stack Overflow has a relatively less formal way of writing. Informal words like \"Doesn't, I'm, I've...\" are more prevalent that its counterpart. In general, we could observe decent use of English and sentence structure. However, that could be better. In many posts, the start of their sentences and bullet points are not capitalised. Moreover, usage of some words are incorrect e.g. Conjunctions used in the post body \"So I can filter them out..." or "And now we see that using ...\". It is worth noting that there are technical terms and codes used in Stack Overflow that could be Out Of Vocabulary (OOV) words. For example, tree_.getstate() and graphviz' .dot file are used in the posts but the words are OOV. Therefore, tokenization need to be altered to account for unknown tokens (UNKs). Similarly, we should use a software-specific POS tagger to handle the text from Stack Overflow.")
+    st.write("")
+    st.subheader("Hardware Zone - ")
+    st.write("Hardware Zone has two main components - news and forums. The news portion is similar to Channel NewsAsia as most of the news are retrieved from proper news websites, our group will be focusing on the forums. The forums are filled with informal way of writing. The users are mainly Singaporeans, which can explain the common use of Singlish, improper English and structure. On one of the posts - 'any reviews for their boxes? like streams always buffering??', we can observe the lack of capitalisation, use of broken English and exccessive use of punctuation. For another post, it utilised Singlish - 'Change to dark mode lor'. There is also frequent use of emojis or expressions in many posts. Hence, the terms used could be less complex in Hardware Zone as there is very little complex technical terms and unique words used as compared to Stack Overflow.")
+    st.write("")
+    st.subheader("Channel NewsAsia - ")
+    st.write("Channel NewsAsia is a news platform. The journalists are proficient in English and there are many layers of vetting before a post is published. On that account, Channel NewsAsia has a formal way of writing, the most proper use of English sentence structure as compared to the other two counterparts. The posts have proper punctuations and sentence structures. Each sentence is gramatically correct, has capitalisation at the start and proper nouns are capitalised. There might be some unknown terms used such as 'Oxbotica' or 'AppliedEV' but with proper sentence structures, there is enough context to understand. Out of all 3 websites, it would be the easiest to apply tokenization and POS tagging directly to this news posts.")
+    st.write("")
+    st.write("")
+    st.subheader("Sources - ")
+    st.markdown("Stack Overflow https://stackoverflow.com/questions/32506951/how-to-explore-a-decision-tree-built-using-scikit-learn , https://stackoverflow.com/questions/3437059/does-python-have-a-string-contains-substring-method")
+    st.markdown("Hardware Zone https://forums.hardwarezone.com.sg/threads/new-forum-bugs-reporting-list.6488755/ , https://forums.hardwarezone.com.sg/threads/android-tv-box.5678618/")
+    st.markdown("Channel NewsAsia https://www.channelnewsasia.com/business/oxbotica-develop-multi-purpose-self-driving-vehicle-appliedev-2162676 , https://www.channelnewsasia.com/business/new-zealand-banks-post-office-hit-outages-apparent-cyber-attack-2162891")
 
 if b4:
     placeholder.empty()
