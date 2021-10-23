@@ -28,7 +28,7 @@ This allows us to form a partial control over the output review as we hope that 
 
 As we know when it's come to text generation task it's always easier to use GPT2 due to its causal LM training objective (and also the ease of finetuning by simply giving it labels==input_inds). However the gpt2 pretrain is big in size (600MB) and has long inference time. As such distil gpt-2 was chosen for the task due to **PRODUCTION** reason. (Of course, if you just want to score for the assignment you wouldnt need to care for this issue)
 
-The evaluation loss for such decision is about 0.1, for which I couldnt give a single fk about. Not like we can evaluate the generation output properly anyway. 
+The evaluation loss for such decision is about 0.1. Nice.
 
 Colab was used because our dataset is about 15000 (train+dev) reviews, which running a cpu would cost about 138 hours (depends on batchsize, padding and other parameters). We use wandb to track the hyperameters and data lineage, which were extremely useful to judge which change results in certain behaviours of our model (hint: the number of trainable layers were one of the most interesting). 
 
