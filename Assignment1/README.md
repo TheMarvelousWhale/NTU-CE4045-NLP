@@ -7,7 +7,6 @@ Group repo for the CE4045 Group Project
 * Start env: `conda activate 4045asg1`
 * Install packages: `pip install -r requirements.txt`
 
-
 ## Running of components
 ### Data Exploration
 * With `4045asg1` environment activated, start Jupyter Notebook: `jupyter notebook`
@@ -24,12 +23,13 @@ Group repo for the CE4045 Group Project
 
 
 ## Source Files
-* GIT BLAME VIET: Include source for the pytorch model
-* `Gcloud_deploy` : Docker files for hosting of Review Generation Model
-* `Android` : Source code for Android App
+* `Review Generator with GPT-2.ipynb` : Notebook for Review Generator Model Development. To be mounted on Google Colab with `reviewSelected100.json` in Google Drive. 
+* `/Gcloud_deploy` : Docker files for hosting of Review Generation Model
+* `/Android` : Source code for Android App
 
 
-## Pre-processed Files
+## Pre-Processed/Pre-Trained Files
 * `business_adj_phrase.json` : All Adjective Phrases, grouped by business
 * `indicative_phrase-ltn` : Selected Indicative Adjective Phrase of each business (`ltn` refers to the SMART notation for tf-idf, i.e. log tf, idf, no normalisation)
 * `POS_Tag.csv` : Output of the POS comparison between coarse grained and fine grained tagger
+* `model/pretty-lion-15.pt` : Pre-trained Review Generator Model
