@@ -226,7 +226,3 @@ def print_compiled_list(compiled_list):
         list.append(i)
     return list
 
-# doc = nlp_trf("this is a very fat and orange cat")
-# for token in doc:
-#     st.write(token.text, '|', token.dep_, '|', token.head.text, '|', token.head.pos_, '|', [child for child in token.children])
-# spacy.displacy.render(doc, style='dep')

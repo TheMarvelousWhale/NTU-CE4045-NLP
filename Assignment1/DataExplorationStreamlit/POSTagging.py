@@ -67,13 +67,6 @@ def pos_spacy_coarse_fine(sampled_reviews):
             pos_df=pos_df.append(temp_dict, ignore_index=True)
     return pos_df
 
-#random_reviews = random.sample(big_json,5)
-# analyze_pos(random_reviews)
-# df = pos_spacy(random_reviews)
-#df = pos_spacy_coarse_fine(random_reviews)
-#df.to_csv("POS_Tag.csv", index=None)
-#df
-
 def print_POS_solution():
     pos = 0
     list = []
@@ -90,10 +83,3 @@ def print_POS_solution():
     for i in arr:
         list.append(i)
     return list
-
-#tokenized_review = word_tokenize(random_reviews[0]['text'])
-#doc_trf = nlp_trf(random_reviews[0]['text'])
-#print(len(tokenized_review))
-#len(doc_trf)
-#for index, i in enumerate(doc_trf):
-#    print(i, tokenized_review[index])

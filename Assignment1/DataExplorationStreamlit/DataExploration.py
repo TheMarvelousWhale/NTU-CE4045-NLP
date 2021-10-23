@@ -85,11 +85,6 @@ def choosing_bus_id():
     #Because we have to repeat the whole thing for 2 businesses, we need to wrap the functions into a single wrapper for reuse
     return chosen_business_1, chosen_business_2
 
-# for y in ['useful','stars','funny','cool']:
-#     print({y:Counter(x[y] for x in big_json)})
-#     print()
-
-
 # Wrapper for analysis  -- not too sure if the inside functions should throw outside anot it's quite task specific
 @st.cache(suppress_st_warning=True)
 def analyze_business(chosen_business):
