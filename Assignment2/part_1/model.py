@@ -47,6 +47,7 @@ class RNNModel(nn.Module):
 
     def forward(self, input, hidden):
         emb = self.drop(self.encoder(input))
+        print(emb.size())
         output, hidden = self.rnn(emb, hidden)
         output = self.drop(output)
         decoded = self.decoder(output)
@@ -60,6 +61,48 @@ class RNNModel(nn.Module):
                     weight.new_zeros(self.nlayers, bsz, self.nhid))
         else:
             return weight.new_zeros(self.nlayers, bsz, self.nhid)
+
+
+class FNNModel(nn.Module):
+    """Container module with an encoder, a recurrent module, and a decoder."""
+
+    def __init__(self, ntoken, ninp, nhid, window, nlayers, dropout=0.2): # ninp = embeing size, nhid = hiden units
+        super(FNNModel, self).__init__()
+        self.ntoken = ntoken
+        self.drop = nn.Dropout(dropout)
+        self.encoder = nn.Embedding(ntoken, ninp)
+        self.fc1 = nn.Linear(window*ninp,nhid)
+        self.decoder = nn.Linear(nhid,ntoken)
+        self.softmax = nn.LogSoftmax(dim=1)
+        self.init_weights()
+        self.nhid = nhid
+        self.nlayers = nlayers
+        self.embdim = ninp
+        self.window = window
+
+    def init_weights(self):
+        initrange = 0.1
+        nn.init.uniform_(self.encoder.weight, -initrange, initrange)
+        nn.init.zeros_(self.decoder.weight)
+        nn.init.uniform_(self.decoder.weight, -initrange, initrange)
+
+    def forward(self, input, hidden):
+        emb = self.encoder(input)
+        print(emb.size())
+        emb = self.drop(emb)
+        print(emb.size())
+        output = torch.tanh(self.fc1(emb))
+        output = self.drop(output)
+        output = self.decoder(output) # Decode layer
+        output = output.view(-1, self.ntoken)
+        return self.softmax(output)
+
+    def init_hidden(self, bsz):
+        weight = next(self.parameters())
+        return weight.new_zeros(self.nlayers, bsz, self.nhid)
+
+
+
 
 # Temporarily leave PositionalEncoding module here. Will be moved somewhere else.
 class PositionalEncoding(nn.Module):
