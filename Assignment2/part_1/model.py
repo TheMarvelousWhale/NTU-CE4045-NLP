@@ -65,40 +65,26 @@ class RNNModel(nn.Module):
 class FNNModel(nn.Module):
     """Container module with an encoder, a recurrent module, and a decoder."""
 
-    def __init__(self, ntoken, ninp, nhid, window, nlayers, dropout=0.2): # ninp = embeing size, nhid = hiden units
+    def __init__(self, vocab_size, embedding_dim, context_size, h):
         super(FNNModel, self).__init__()
-        self.ntoken = ntoken
-        self.drop = nn.Dropout(dropout)
-        self.encoder = nn.Embedding(ntoken, ninp)
-        self.fc1 = nn.Linear(window*ninp,nhid)
-        self.decoder = nn.Linear(nhid,ntoken)
-        self.softmax = nn.LogSoftmax(dim=1)
-        self.init_weights()
-        self.nhid = nhid
-        self.nlayers = nlayers
-        self.embdim = ninp
-        self.window = window
+        self.context_size = context_size
+        self.embedding_dim = embedding_dim
+        self.embeddings = nn.Embedding(vocab_size, embedding_dim)
+        self.linear1 = nn.Linear(context_size * embedding_dim, h)
+        self.linear2 = nn.Linear(h, vocab_size, bias = False)
 
-    def init_weights(self):
-        initrange = 0.1
-        nn.init.uniform_(self.encoder.weight, -initrange, initrange)
-        nn.init.zeros_(self.decoder.weight)
-        nn.init.uniform_(self.decoder.weight, -initrange, initrange)
-
-    def forward(self, input, hidden):
-        emb = self.encoder(input)
-        print(emb.size())
-        emb = self.drop(emb)
-        print(emb.size())
-        output = torch.tanh(self.fc1(emb))
-        output = self.drop(output)
-        output = self.decoder(output) # Decode layer
-        output = output.view(-1, self.ntoken)
-        return self.softmax(output)
-
-    def init_hidden(self, bsz):
-        weight = next(self.parameters())
-        return weight.new_zeros(self.nlayers, bsz, self.nhid)
+    def forward(self, inputs):
+        # compute x': concatenation of x1 and x2 embeddings
+        embeds = self.embeddings(inputs).view((-1,self.context_size * self.embedding_dim))
+        # compute h: tanh(W_1.x' + b)
+        out = torch.tanh(self.linear1(embeds))
+        # compute W_2.h
+        out = self.linear2(out)
+        # compute y: log_softmax(W_2.h)
+        log_probs = F.log_softmax(out, dim=1)
+        # return log probabilities
+        # BATCH_SIZE x len(vocab)
+        return log_probs
 
 
 
