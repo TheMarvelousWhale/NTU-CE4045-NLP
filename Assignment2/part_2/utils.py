@@ -437,7 +437,7 @@ def forward_calc(self, sentence, chars, chars2_length, d,cnn_archi):
     '''
     
     # Get the emission scores from the BiLSTM
-    feats = self._get_lstm_features(sentence, chars, chars2_length, d,cnn_archi)
+    feats = self._get_features(sentence, chars, chars2_length, d,cnn_archi)
     # viterbi to get tag_seq
     
     # Find the best path, given the features.
@@ -453,7 +453,7 @@ def forward_calc(self, sentence, chars, chars2_length, d,cnn_archi):
 def get_neg_log_likelihood(self, sentence, tags, chars2, chars2_length, d,cnn_archi):
     # sentence, tags is a list of ints
     # features is a 2D tensor, len(sentence) * self.tagset_size
-    feats = self._get_lstm_features(sentence, chars2, chars2_length, d,cnn_archi)
+    feats = self._get_features(sentence, chars2, chars2_length, d,cnn_archi)
 
     if self.use_crf:
         forward_score = self._forward_alg(feats)
