@@ -2,6 +2,7 @@ import os
 from io import open
 import torch
 
+#Return distionary for idx2word or word2idx
 class Dictionary(object):
     def __init__(self):
         self.word2idx = {}
@@ -16,7 +17,7 @@ class Dictionary(object):
     def __len__(self):
         return len(self.idx2word)
 
-
+#Tokenize selected file
 class Corpus(object):
     def __init__(self, path):
         self.dictionary = Dictionary()
@@ -36,13 +37,13 @@ class Corpus(object):
 
         # Tokenize file content
         with open(path, 'r', encoding="utf8") as f:
-            idss = []
+            ids_list = []
             for line in f:
                 words = line.split() + ['<eos>']
                 ids = []
                 for word in words:
                     ids.append(self.dictionary.word2idx[word])
-                idss.append(torch.tensor(ids).type(torch.int64))
-            ids = torch.cat(idss)
+                ids_list.append(torch.tensor(ids).type(torch.int64))
+            ids = torch.cat(ids_list)
 
         return ids

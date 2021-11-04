@@ -68,18 +68,8 @@ device = torch.device("cuda" if args.cuda else "cpu")
 
 corpus = data.Corpus(args.data)
 
-# Starting from sequential data, batchify arranges the dataset into columns.
-# For instance, with the alphabet as the sequence and batch size 4, we'd get
-# ┌ a g m s ┐
-# │ b h n t │
-# │ c i o u │
-# │ d j p v │
-# │ e k q w │
-# └ f l r x ┘.
-# These columns are treated as independent by the model, which means that the
-# dependence of e. g. 'g' on 'f' can not be learned, but allows more efficient
-# batch processing.
 
+#Allows more efficient batching processing
 def batchify(data, bsz):
     # Work out how cleanly we can divide the dataset into bsz parts.
     nbatch = data.size(0) // bsz
@@ -99,6 +89,7 @@ test_data = batchify(corpus.test, eval_batch_size)
 ###############################################################################
 
 ntokens = len(corpus.dictionary)
+
 if args.model == 'Transformer':
     model = model.TransformerModel(ntokens, args.emsize, args.nhead, args.nhid, args.nlayers, args.dropout).to(device)
 else:
@@ -120,15 +111,6 @@ def repackage_hidden(h):
 
 
 # get_batch subdivides the source data into chunks of length args.bptt.
-# If source is equal to the example output of the batchify function, with
-# a bptt-limit of 2, we'd get the following two Variables for i = 0:
-# ┌ a g m s ┐ ┌ b h n t ┐
-# └ b h n t ┘ └ c i o u ┘
-# Note that despite the name of the function, the subdivison of data is not
-# done along the batch dimension (i.e. dimension 1), since that was handled
-# by the batchify function. The chunks are along dimension 0, corresponding
-# to the seq_len dimension in the LSTM.
-
 def get_batch(source, i):
     seq_len = min(args.bptt, len(source) - 1 - i)
     data = source[i:i+seq_len]
@@ -136,8 +118,8 @@ def get_batch(source, i):
     return data, target
 
 
+# Turn on evaluation mode which disables dropout.
 def evaluate(data_source):
-    # Turn on evaluation mode which disables dropout.
     model.eval()
     total_loss = 0.
     ntokens = len(corpus.dictionary)
@@ -156,8 +138,8 @@ def evaluate(data_source):
     return total_loss / (len(data_source) - 1)
 
 
+# Turn on training mode which enables dropout.
 def train():
-    # Turn on training mode which enables dropout.
     model.train()
     total_loss = 0.
     start_time = time.time()
@@ -166,8 +148,8 @@ def train():
         hidden = model.init_hidden(args.batch_size)
     for batch, i in enumerate(range(0, train_data.size(0) - 1, args.bptt)):
         data, targets = get_batch(train_data, i)
-        # Starting each batch, we detach the hidden state from how it was previously produced.
-        # If we didn't, the model would try backpropagating all the way to start of the dataset.
+        # Starting each batch, the hidden state detached from previously produced.
+        # Prevent backpropagating all the way to start of the dataset.
         model.zero_grad()
         if args.model == 'Transformer':
             output = model(data)
@@ -211,7 +193,6 @@ def export_onnx(path, batch_size, seq_len):
 lr = args.lr
 best_val_loss = None
 
-# At any point you can hit Ctrl + C to break out of training early.
 try:
     for epoch in range(1, args.epochs+1):
         epoch_start_time = time.time()
@@ -222,28 +203,26 @@ try:
                 'valid ppl {:8.2f}'.format(epoch, (time.time() - epoch_start_time),
                                            val_loss, math.exp(val_loss)))
         print('-' * 89)
-        # Save the model if the validation loss is the best we've seen so far.
+        # Save the model with best validation loss.
         if not best_val_loss or val_loss < best_val_loss:
             with open(args.save, 'wb') as f:
                 torch.save(model, f)
             best_val_loss = val_loss
         else:
-            # Anneal the learning rate if no improvement has been seen in the validation dataset.
+            # Anneal the learning rate for better improvement if no good validation loss.
             lr /= 4.0
 except KeyboardInterrupt:
     print('-' * 89)
     print('Exiting from training early')
 
-# Load the best saved model.
+# Load the best saved model, speed up forward pass
 with open(args.save, 'rb') as f:
     model = torch.load(f)
-    # after load the rnn params are not a continuous chunk of memory
-    # this makes them a continuous chunk, and will speed up forward pass
-    # Currently, only rnn model supports flatten_parameters function.
     if args.model in ['RNN_TANH', 'RNN_RELU', 'LSTM', 'GRU']:
         model.rnn.flatten_parameters()
 
 # Run on test data.
+
 test_loss = evaluate(test_data)
 print('=' * 89)
 print('| End of training | test loss {:5.2f} | test ppl {:8.2f}'.format(

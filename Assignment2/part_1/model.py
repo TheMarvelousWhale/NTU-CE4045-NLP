@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+#Create RNNModel
 class RNNModel(nn.Module):
     """Container module with an encoder, a recurrent module, and a decoder."""
 
@@ -22,12 +23,6 @@ class RNNModel(nn.Module):
             self.rnn = nn.RNN(ninp, nhid, nlayers, nonlinearity=nonlinearity, dropout=dropout)
         self.decoder = nn.Linear(nhid, ntoken)
 
-        # Optionally tie weights as in:
-        # "Using the Output Embedding to Improve Language Models" (Press & Wolf 2016)
-        # https://arxiv.org/abs/1608.05859
-        # and
-        # "Tying Word Vectors and Word Classifiers: A Loss Framework for Language Modeling" (Inan et al. 2016)
-        # https://arxiv.org/abs/1611.01462
         if tie_weights:
             if nhid != ninp:
                 raise ValueError('When using the tied flag, nhid must be equal to emsize')
@@ -61,7 +56,7 @@ class RNNModel(nn.Module):
         else:
             return weight.new_zeros(self.nlayers, bsz, self.nhid)
 
-
+#Create FNNModel
 class FNNModel(nn.Module):
     """Container module with an encoder, a recurrent module, and a decoder."""
 
@@ -74,22 +69,18 @@ class FNNModel(nn.Module):
         self.linear2 = nn.Linear(h, vocab_size, bias = False)
 
     def forward(self, inputs):
-        # compute x': concatenation of x1 and x2 embeddings
         embeds = self.embeddings(inputs).view((-1,self.context_size * self.embedding_dim))
-        # compute h: tanh(W_1.x' + b)
+
         out = torch.tanh(self.linear1(embeds))
-        # compute W_2.h
+
         out = self.linear2(out)
-        # compute y: log_softmax(W_2.h)
+
         log_probs = F.log_softmax(out, dim=1)
+
         # return log probabilities
-        # BATCH_SIZE x len(vocab)
         return log_probs
 
 
-
-
-# Temporarily leave PositionalEncoding module here. Will be moved somewhere else.
 class PositionalEncoding(nn.Module):
     r"""Inject some information about the relative or absolute position of the tokens
         in the sequence. The positional encodings have the same dimension as

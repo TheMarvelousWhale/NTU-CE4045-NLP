@@ -12,6 +12,8 @@ import random
 
 import data
 
+from part_1.generate import is_transformer_model
+
 parser = argparse.ArgumentParser(description='PyTorch Wikitext-2 Language Model')
 
 # Model parameters.

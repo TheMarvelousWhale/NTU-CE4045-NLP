@@ -6,9 +6,7 @@
 ###############################################################################
 
 import argparse
-
 import torch
-
 import data
 
 parser = argparse.ArgumentParser(description='PyTorch Wikitext-2 Language Model')
@@ -32,7 +30,7 @@ parser.add_argument('--log-interval', type=int, default=100,
                     help='reporting interval')
 args = parser.parse_args()
 
-# Set the random seed manually for reproducibility.
+# Set manual random seed
 torch.manual_seed(args.seed)
 if torch.cuda.is_available():
     if not args.cuda:
@@ -55,8 +53,9 @@ if not is_transformer_model:
     hidden = model.init_hidden(1)
 input = torch.randint(ntokens, (1, 1), dtype=torch.long).to(device)
 
+#no_grad allows faster processing
 with open(args.outf, 'w') as outf:
-    with torch.no_grad():  # no tracking history
+    with torch.no_grad():
         for i in range(args.words):
             if is_transformer_model:
                 output = model(input, False)
