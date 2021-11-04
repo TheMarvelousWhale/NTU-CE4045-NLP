@@ -26,7 +26,7 @@ class Corpus(object):
         self.test = self.tokenize(os.path.join(path, 'test.txt'))
     
     def process_line(self, line):
-        return re.sub(r"[^a-zA-Z0-9,\.!?<>\- ]+", '', line)
+        return re.sub(r"[^a-zA-Z0-9,\.!?<>\- ]+", '', line).replace('<unk>','').lower()
 
     def tokenize(self, path):
         """Tokenizes a text file."""

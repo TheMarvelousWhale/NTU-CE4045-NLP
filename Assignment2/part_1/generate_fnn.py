@@ -8,28 +8,22 @@
 import argparse
 
 import torch
+import random
 
 import data
-import model
 
 parser = argparse.ArgumentParser(description='PyTorch Wikitext-2 Language Model')
 
 # Model parameters.
 parser.add_argument('--data', type=str, default='./data/wikitext-2',
                     help='location of the data corpus')
-parser.add_argument('--shared', action='store_true',
+parser.add_argument('--checkpoint', type=str, default='./model_shared.pt',
                     help='model checkpoint to use')
-parser.add_argument('--emsize', type=int, default=200,
-                    help='size of word embeddings')
-parser.add_argument('--n', type=int, default=8,
-                    help='random seed')
-parser.add_argument('--prompt', type=str, default="",
-                    help='prompts for next word, if no prompt given, random words will be taken from corpus')
 parser.add_argument('--outf', type=str, default='generated.txt',
                     help='output file for generated text')
 parser.add_argument('--words', type=int, default='1000',
                     help='number of words to generate')
-parser.add_argument('--seed', type=int, default=42,
+parser.add_argument('--seed', type=int, default=1111,
                     help='random seed')
 parser.add_argument('--cuda', action='store_true',
                     help='use CUDA')
@@ -50,39 +44,34 @@ device = torch.device("cuda" if args.cuda else "cpu")
 if args.temperature < 1e-3:
     parser.error("--temperature has to be greater or equal 1e-3")
 
+model = torch.load(args.checkpoint).to(device)
+model.eval()
+l = dict(model.named_modules())
+embedding_size = l['embeddings'].embedding_dim
+input_layer_dim = l['linear1'].in_features
+context_size = int(input_layer_dim/embedding_size)
+
 corpus = data.Corpus(args.data)
 ntokens = len(corpus.dictionary)
 
-if args.shared:
-    H = 200
-    model_path = 'model_shared.dat'
-else:
-    H = 100
-    model_path = 'model.dat'
-context_size = args.n - 1
-
-model = model.FNNModel(ntokens, args.emsize, context_size, H)
-model.load_state_dict(torch.load(model_path))
-model.to(device)
-# with open(args.checkpoint, 'rb') as f:
-#     model = torch.load(f).to(device)
-# model.eval()
+full_corpus = torch.cat((corpus.train, corpus.valid, corpus.test))
 
 
-
-# is_transformer_model = hasattr(model, 'model_type') and model.model_type == 'Transformer'
-# if not is_transformer_model:
-#     hidden = model.init_hidden(1)
-
-input = torch.randint(ntokens, (1, 1), dtype=torch.long).to(device)
 
 with open(args.outf, 'w') as outf:
     with torch.no_grad():  # no tracking history
         for i in range(args.words):
-            output = model(input)
-            word_weights = output.squeeze().div(args.temperature).exp().cpu()
-            word_idx = torch.multinomial(word_weights, 1)[0]
-            input.fill_(word_idx)
+            if is_transformer_model:
+                output = model(input, False)
+                word_weights = output[-1].squeeze().div(args.temperature).exp().cpu()
+                word_idx = torch.multinomial(word_weights, 1)[0]
+                word_tensor = torch.Tensor([[word_idx]]).long().to(device)
+                input = torch.cat([input, word_tensor], 0)
+            else:
+                output, hidden = model(input, hidden)
+                word_weights = output.squeeze().div(args.temperature).exp().cpu()
+                word_idx = torch.multinomial(word_weights, 1)[0]
+                input.fill_(word_idx)
 
             word = corpus.dictionary.idx2word[word_idx]
 
