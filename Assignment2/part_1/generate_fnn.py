@@ -23,6 +23,8 @@ parser.add_argument('--emsize', type=int, default=200,
                     help='size of word embeddings')
 parser.add_argument('--n', type=int, default=8,
                     help='random seed')
+parser.add_argument('--prompt', type=str, default="",
+                    help='prompts for next word, if no prompt given, random words will be taken from corpus')
 parser.add_argument('--outf', type=str, default='generated.txt',
                     help='output file for generated text')
 parser.add_argument('--words', type=int, default='1000',
