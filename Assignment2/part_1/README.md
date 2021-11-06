@@ -1,4 +1,4 @@
-
+# Eh dont say i never warn you i dont know whether this one correct anot ah you better ownself check
 # FNN 8-Gram Language Model
 
 ## Environment Setup (with Conda)
