@@ -12,15 +12,13 @@ import random
 
 import data_fnn as data
 
-from part_1.generate import is_transformer_model
-
 parser = argparse.ArgumentParser(description='PyTorch Wikitext-2 Language Model')
 
 # Model parameters.
 parser.add_argument('--data', type=str, default='./data/wikitext-2',
                     help='location of the data corpus')
 parser.add_argument('--checkpoint', type=str, default='./Experiment1.pt',
-                    help='model checkpoint to use')
+                    help='model (.pt file) to use')
 parser.add_argument('--outf', type=str, default='generated.txt',
                     help='output file for generated text')
 parser.add_argument('--words', type=int, default='15',
@@ -35,7 +33,6 @@ if torch.cuda.is_available():
         print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
 device = torch.device("cuda" if args.cuda else "cpu")
-
 
 
 model = torch.load(args.checkpoint).to(device)

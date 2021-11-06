@@ -1,60 +1,54 @@
-# Word-level language modeling RNN
 
-This example trains a multi-layer RNN (Elman, GRU, or LSTM) on a language modeling task.
-By default, the training script uses the Wikitext-2 dataset, provided.
-The trained model can then be used by the generate script to generate new text.
+# FNN 8-Gram Language Model
 
+## Environment Setup (with Conda)
+* Python env: `conda create --name 4045asg2 python=3.9.7`
+* Start env: `conda activate 4045asg2`
+* Install packages: `pip install -r requirements.txt`
+
+## Training
 ```bash 
-python main.py --cuda --epochs 6           # Train a LSTM on Wikitext-2 with CUDA
-python main.py --cuda --epochs 6 --tied    # Train a tied LSTM on Wikitext-2 with CUDA
-python main.py --cuda --epochs 6 --model Transformer --lr 5   
-                                           # Train a Transformer model on Wikitext-2 with CUDA
-python main.py --cuda --tied               # Train a tied LSTM on Wikitext-2 with CUDA for 40 epochs
-python generate.py                         # Generate samples from the trained LSTM model.
-python generate.py --cuda --model Transformer
-                                           # Generate samples from the trained Transformer model.
+python train.py --cuda --epochs 6                     # Train a FNN on Wikitext-2 with CUDA
+python train.py --cuda --epochs 6 --tied --hidd 200   # Train a tied FNN on Wikitext-2 with CUDA
+python train.py --cuda --epochs 20                    # Train a FNN on Wikitext-2 with CUDA for 20 epochs
 ```
 
-The model uses the `nn.RNN` module (and its sister modules `nn.GRU` and `nn.LSTM`)
-which will automatically use the cuDNN backend if run on CUDA with cuDNN installed.
+The `train.py` script accepts the following arguments:
+```bash
+optional arguments:
+  -h, --help       show this help message and exit
+  --data DATA      location of the data corpus
+  --emsize EMSIZE  size of word embeddings
+  --hidd HIDD      number of hidden units per layer
+  --contsz CONTSZ  context size (8-gram -> contsz = 7)
+  --epochs EPOCHS  upper epoch limit
+  --batch_size N   batch size
+  --tied           tie the embedding weights and output weights
+  --cuda           use CUDA
+  --save SAVE      path to save the final model
+  --lr LR          initial learning rate
+```
 
-During training, if a keyboard interrupt (Ctrl-C) is received,
-training is stopped and the current model is evaluated against the test dataset.
+## Generating
+```bash
+python generate_fnn.py --cuda --checkpoint Experiment3.pt     # Generate text using Experiment3.pt model
+python generate_fnn.py --cuda --checkpoint --words 30         # Generate text that are 30 tokens long
+```
 
-The `main.py` script accepts the following arguments:
-
+The `generate_fnn.py` script accepts the following arguments:
 ```bash
 optional arguments:
   -h, --help            show this help message and exit
   --data DATA           location of the data corpus
-  --model MODEL         type of recurrent net (RNN_TANH, RNN_RELU, LSTM, GRU,
-                        Transformer)
-  --emsize EMSIZE       size of word embeddings
-  --nhid NHID           number of hidden units per layer
-  --nlayers NLAYERS     number of layers
-  --lr LR               initial learning rate
-  --clip CLIP           gradient clipping
-  --epochs EPOCHS       upper epoch limit
-  --batch_size N        batch size
-  --bptt BPTT           sequence length
-  --dropout DROPOUT     dropout applied to layers (0 = no dropout)
-  --tied                tie the word embedding and softmax weights
-  --seed SEED           random seed
+  --checkpoint CHECKPOINT
+                        model checkpoint to use
+  --outf OUTF           output file for generated text
+  --words WORDS         number of words to generate
   --cuda                use CUDA
-  --log-interval N      report interval
-  --save SAVE           path to save the final model
-  --onnx-export ONNX_EXPORT
-                        path to export the final model in onnx format
-  --nhead NHEAD         the number of heads in the encoder/decoder of the
-                        transformer model
 ```
-
-With these arguments, a variety of models can be tested.
-As an example, the following arguments produce slower but better models:
-
-```bash
-python main.py --cuda --emsize 650 --nhid 650 --dropout 0.5 --epochs 40           
-python main.py --cuda --emsize 650 --nhid 650 --dropout 0.5 --epochs 40 --tied    
-python main.py --cuda --emsize 1500 --nhid 1500 --dropout 0.65 --epochs 40        
-python main.py --cuda --emsize 1500 --nhid 1500 --dropout 0.65 --epochs 40 --tied 
+`generate_fnn.py` generates text by selecting N random tokens (where N refers to the context size) from the corpus, then predicts the subsequent words. After running the script, two lines would appear on the bash. An example is as shown: 
 ```
+### like a child , with doubts cast | in the first year , and the british empire had been destroyed by the national
+$$$ like a child , with doubts cast over the of his reasons for refusing the under
+``` 
+The first line (starting with ###) is the generated text from the model, with the prompt and the predicted text separated by '|', and the second line (starting with $$$) is the original text from the corpus.
