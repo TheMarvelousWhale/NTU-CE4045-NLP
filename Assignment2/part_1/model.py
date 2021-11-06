@@ -60,13 +60,19 @@ class RNNModel(nn.Module):
 class FNNModel(nn.Module):
     """Container module with an encoder, a recurrent module, and a decoder."""
 
-    def __init__(self, vocab_size, embedding_dim, context_size, h):
+    def __init__(self, vocab_size, embedding_dim, context_size, h, tied=False):
         super(FNNModel, self).__init__()
         self.context_size = context_size
         self.embedding_dim = embedding_dim
         self.embeddings = nn.Embedding(vocab_size, embedding_dim)
         self.linear1 = nn.Linear(context_size * embedding_dim, h)
         self.linear2 = nn.Linear(h, vocab_size, bias = False)
+        self.tied = tied
+        if tied:
+            if embedding_dim != h:
+                raise ValueError('When using the tied flag, embedding size must be equal to number of hidden units')
+            self.linear2.weight = self.embeddings.weight
+        
 
     def forward(self, inputs):
         embeds = self.embeddings(inputs).view((-1,self.context_size * self.embedding_dim))

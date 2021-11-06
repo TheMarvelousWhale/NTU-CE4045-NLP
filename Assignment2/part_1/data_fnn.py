@@ -13,7 +13,7 @@ class Dictionary(object):
             self.idx2word.append(word)
             self.word2idx[word] = len(self.idx2word) - 1
         return self.word2idx[word]
-
+ 
     def __len__(self):
         return len(self.idx2word)
 

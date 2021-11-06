@@ -10,7 +10,7 @@ import argparse
 import torch
 import random
 
-import data
+import data_fnn as data
 
 from part_1.generate import is_transformer_model
 
@@ -19,65 +19,47 @@ parser = argparse.ArgumentParser(description='PyTorch Wikitext-2 Language Model'
 # Model parameters.
 parser.add_argument('--data', type=str, default='./data/wikitext-2',
                     help='location of the data corpus')
-parser.add_argument('--checkpoint', type=str, default='./model_shared.pt',
+parser.add_argument('--checkpoint', type=str, default='./Experiment1.pt',
                     help='model checkpoint to use')
 parser.add_argument('--outf', type=str, default='generated.txt',
                     help='output file for generated text')
-parser.add_argument('--words', type=int, default='1000',
+parser.add_argument('--words', type=int, default='15',
                     help='number of words to generate')
-parser.add_argument('--seed', type=int, default=1111,
-                    help='random seed')
 parser.add_argument('--cuda', action='store_true',
                     help='use CUDA')
-parser.add_argument('--temperature', type=float, default=1.0,
-                    help='temperature - higher will increase diversity')
-parser.add_argument('--log-interval', type=int, default=100,
-                    help='reporting interval')
 args = parser.parse_args()
 
 # Set the random seed manually for reproducibility.
-torch.manual_seed(args.seed)
 if torch.cuda.is_available():
     if not args.cuda:
         print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
 device = torch.device("cuda" if args.cuda else "cpu")
 
-if args.temperature < 1e-3:
-    parser.error("--temperature has to be greater or equal 1e-3")
+
 
 model = torch.load(args.checkpoint).to(device)
-model.eval()
-l = dict(model.named_modules())
-embedding_size = l['embeddings'].embedding_dim
-input_layer_dim = l['linear1'].in_features
-context_size = int(input_layer_dim/embedding_size)
-
 corpus = data.Corpus(args.data)
-ntokens = len(corpus.dictionary)
-
 full_corpus = torch.cat((corpus.train, corpus.valid, corpus.test))
 
 
-
+model.eval()
 with open(args.outf, 'w') as outf:
-    with torch.no_grad():  # no tracking history
-        for i in range(args.words):
-            if is_transformer_model:
-                output = model(input, False)
-                word_weights = output[-1].squeeze().div(args.temperature).exp().cpu()
-                word_idx = torch.multinomial(word_weights, 1)[0]
-                word_tensor = torch.Tensor([[word_idx]]).long().to(device)
-                input = torch.cat([input, word_tensor], 0)
-            else:
-                output, hidden = model(input, hidden)
-                word_weights = output.squeeze().div(args.temperature).exp().cpu()
-                word_idx = torch.multinomial(word_weights, 1)[0]
-                input.fill_(word_idx)
+    seed_pos = random.randint(0, len(full_corpus)-7)
+    seed_span = full_corpus[seed_pos:seed_pos+7] # Pick random span from corpus
+    generated_text=seed_span.to(device)
+    for i in range(args.words):
+        with torch.no_grad():
+            output = model(generated_text[-7:])
+            word_id = torch.argmax(output, dim=1)
+            generated_text = torch.cat((generated_text,word_id))
 
-            word = corpus.dictionary.idx2word[word_idx]
-
-            outf.write(word + ('\n' if i % 20 == 19 else ' '))
-
-            if i % args.log_interval == 0:
-                print('| Generated {}/{} words'.format(i, args.words))
+    sent = [corpus.dictionary.idx2word[i] for i in generated_text]
+    output_sent = ' '.join(sent)
+    output_sent = output_sent.replace("<eos>", "\n")
+    outf.write(output_sent)
+    sent = sent[:7] + ['|']+sent[7:]
+    print("###",' '.join(sent))
+    orig = [corpus.dictionary.idx2word[i] for i in full_corpus[seed_pos:seed_pos+len(sent)-7]] 
+    print("$$$",' '.join(orig))
+    
