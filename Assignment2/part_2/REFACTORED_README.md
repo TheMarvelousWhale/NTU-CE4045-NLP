@@ -19,9 +19,13 @@ The script has a parameters\['debug_whole_script'\] = True which makes it debug 
 
 turn this off to enable full training
 
-For the implementation wise, we modify the lstm portion of the get_lstm_features by adding a parameter that specify which cnn archi we are using (please rename it in the future to get_features or something -- TODO). Inside this function, which is controlled by the parameters\['word_mode'\], the lstm is swapped out with the cnn, and depends on the archi chosen the corresponding components will be loaded. You should pay attention mainly to;
-* get_lstm_features
+For the implementation wise, we modify the lstm portion of the get_features by adding a parameter that specify which cnn archi we are using . Inside this function, which is controlled by the parameters\['word_mode'\], the lstm is swapped out with the cnn, and depends on the archi chosen the corresponding components will be loaded. You should pay attention mainly to:
+* get_features
 * class BiLSTM-CRF
 
-The training is done automatically on ALL archi defined. It will also log all results in a text file and save the loss plot for each model. The F1 score can be find in the corresponding .txt file. 
+where the layers are defined for word_mode portion and how forward connection are connected together
+
+The training is done automatically on ALL archi defined. It will also log all results in a text file and save the loss plot for each model. The F1 score can be find in the corresponding .txt file. The tested architecture can be found in the constant section of the code. The results can be found in [this link](https://entuedu-my.sharepoint.com/personal/chsiao001_e_ntu_edu_sg/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fchsiao001%5Fe%5Fntu%5Fedu%5Fsg%2FDocuments%2FShare%2FwithViet%2Fnlp%5Fass2%5Ftrain1) (may need to request for permission).
+
+![Do you want to make friend with Nana](./molina.png)
 
